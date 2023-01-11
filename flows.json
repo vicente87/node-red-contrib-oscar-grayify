@@ -1,0 +1,416 @@
+[
+    {
+        "id": "cc18020bc6f47fc4",
+        "type": "subflow",
+        "name": "OSCAR Grayify Services",
+        "info": "",
+        "category": "",
+        "in": [
+            {
+                "x": 40,
+                "y": 140,
+                "wires": [
+                    {
+                        "id": "713521bb6df8eb11"
+                    }
+                ]
+            }
+        ],
+        "out": [
+            {
+                "x": 1520,
+                "y": 260,
+                "wires": [
+                    {
+                        "id": "bcfdf930a9e42a00",
+                        "port": 0
+                    }
+                ]
+            }
+        ],
+        "env": [
+            {
+                "name": "URL",
+                "type": "str",
+                "value": ""
+            },
+            {
+                "name": "Nombre del Servicio",
+                "type": "str",
+                "value": ""
+            },
+            {
+                "name": "Usuario",
+                "type": "str",
+                "value": ""
+            },
+            {
+                "name": "Contraseña",
+                "type": "str",
+                "value": ""
+            }
+        ],
+        "meta": {
+            "module": "node-red-contrib-oscar-grayify",
+            "version": "1.0.0",
+            "author": "Vicente Rodriguez Benitez <vicente.rdguezb@gmail.com>",
+            "desc": "Implementación de Grayify Services en OSCAR",
+            "keywords": "node-red, oscar,grayify",
+            "license": "Apache-2.0"
+        },
+        "color": "#DDAA99",
+        "status": {
+            "x": 1500,
+            "y": 40,
+            "wires": [
+                {
+                    "id": "44e4a85b83560750",
+                    "port": 0
+                },
+                {
+                    "id": "f04a2b1140d06b6e",
+                    "port": 0
+                }
+            ]
+        }
+    },
+    {
+        "id": "0fa40667e9f48ec2",
+        "type": "function",
+        "z": "cc18020bc6f47fc4",
+        "name": "Cargar Log",
+        "func": "msg.payload={\n\"username\":msg.username,\n\"password\":msg.pass\n\n}\nmsg.url= msg.servidor_oscar +\"/system/services/\"+msg.grayify ;\n\nreturn msg;",
+        "outputs": 1,
+        "noerr": 0,
+        "initialize": "",
+        "finalize": "",
+        "libs": [],
+        "x": 330,
+        "y": 140,
+        "wires": [
+            [
+                "4ce76c5246874dd6"
+            ]
+        ]
+    },
+    {
+        "id": "713521bb6df8eb11",
+        "type": "change",
+        "z": "cc18020bc6f47fc4",
+        "name": "",
+        "rules": [
+            {
+                "t": "set",
+                "p": "servidor_oscar",
+                "pt": "msg",
+                "to": "URL",
+                "tot": "env"
+            },
+            {
+                "t": "set",
+                "p": "username",
+                "pt": "msg",
+                "to": "Usuario",
+                "tot": "env"
+            },
+            {
+                "t": "set",
+                "p": "pass",
+                "pt": "msg",
+                "to": "Contraseña",
+                "tot": "env"
+            },
+            {
+                "t": "set",
+                "p": "imagen",
+                "pt": "msg",
+                "to": "payload",
+                "tot": "msg"
+            },
+            {
+                "t": "set",
+                "p": "grayify",
+                "pt": "msg",
+                "to": "Nombre del Servicio",
+                "tot": "env"
+            }
+        ],
+        "action": "",
+        "property": "",
+        "from": "",
+        "to": "",
+        "reg": false,
+        "x": 160,
+        "y": 140,
+        "wires": [
+            [
+                "0fa40667e9f48ec2",
+                "44e4a85b83560750"
+            ]
+        ]
+    },
+    {
+        "id": "4ce76c5246874dd6",
+        "type": "change",
+        "z": "cc18020bc6f47fc4",
+        "name": "",
+        "rules": [
+            {
+                "t": "set",
+                "p": "headers",
+                "pt": "msg",
+                "to": "{\t   \"Authorization\": 'Basic ' & $base64encode(\t       payload.username & ':' & payload.password\t   ) \t}",
+                "tot": "jsonata"
+            }
+        ],
+        "action": "",
+        "property": "",
+        "from": "",
+        "to": "",
+        "reg": false,
+        "x": 500,
+        "y": 140,
+        "wires": [
+            [
+                "eeb674928976ec41"
+            ]
+        ]
+    },
+    {
+        "id": "eeb674928976ec41",
+        "type": "http request",
+        "z": "cc18020bc6f47fc4",
+        "name": "grayify service",
+        "method": "GET",
+        "ret": "txt",
+        "paytoqs": "ignore",
+        "url": "",
+        "tls": "",
+        "persist": false,
+        "proxy": "",
+        "insecureHTTPParser": true,
+        "authType": "basic",
+        "senderr": true,
+        "headers": [],
+        "x": 680,
+        "y": 140,
+        "wires": [
+            [
+                "8470a28c85e4e094"
+            ]
+        ]
+    },
+    {
+        "id": "8470a28c85e4e094",
+        "type": "string",
+        "z": "cc18020bc6f47fc4",
+        "name": "",
+        "methods": [
+            {
+                "name": "between",
+                "params": [
+                    {
+                        "type": "str",
+                        "value": "\"token\":\""
+                    },
+                    {
+                        "type": "str",
+                        "value": "\",\"input\""
+                    }
+                ]
+            }
+        ],
+        "prop": "payload",
+        "propout": "payload",
+        "object": "msg",
+        "objectout": "msg",
+        "x": 830,
+        "y": 140,
+        "wires": [
+            [
+                "2f72c3b43b2a9197"
+            ]
+        ]
+    },
+    {
+        "id": "2f72c3b43b2a9197",
+        "type": "function",
+        "z": "cc18020bc6f47fc4",
+        "name": "Get Token-Grayify",
+        "func": "var  var1 = msg.payload;\n\nmsg.token_grayify= var1;\nreturn msg;\n",
+        "outputs": 1,
+        "noerr": 0,
+        "initialize": "// Code added here will be run once\n// whenever the node is started.\n//flow.set(\"token_cowsay\",\"\");\n",
+        "finalize": "",
+        "libs": [],
+        "x": 990,
+        "y": 140,
+        "wires": [
+            [
+                "ffa9ecc49dd969f4"
+            ]
+        ]
+    },
+    {
+        "id": "ffa9ecc49dd969f4",
+        "type": "function",
+        "z": "cc18020bc6f47fc4",
+        "name": "Enviar plants-token",
+        "func": "\nvar token_grayify = msg.token_grayify;\n\n\nmsg.headers = {\n    Authorization: \"Bearer \" + token_grayify\n}\n\nmsg.payload = msg.imagen;\nmsg.url= msg.servidor_oscar+\"/run/\"+msg.grayify;\n\nreturn msg;\n\n",
+        "outputs": 1,
+        "noerr": 0,
+        "initialize": "",
+        "finalize": "",
+        "libs": [],
+        "x": 510,
+        "y": 260,
+        "wires": [
+            [
+                "3c6c31bf9f72c551"
+            ]
+        ]
+    },
+    {
+        "id": "3c6c31bf9f72c551",
+        "type": "base64",
+        "z": "cc18020bc6f47fc4",
+        "name": "",
+        "action": "",
+        "property": "payload",
+        "x": 680,
+        "y": 260,
+        "wires": [
+            [
+                "2b8cdd018191f987"
+            ]
+        ]
+    },
+    {
+        "id": "2b8cdd018191f987",
+        "type": "http request",
+        "z": "cc18020bc6f47fc4",
+        "name": "Grayify Services Run",
+        "method": "POST",
+        "ret": "obj",
+        "paytoqs": "ignore",
+        "url": "",
+        "tls": "",
+        "persist": false,
+        "proxy": "",
+        "insecureHTTPParser": false,
+        "authType": "",
+        "senderr": true,
+        "headers": [],
+        "x": 860,
+        "y": 260,
+        "wires": [
+            [
+                "6b551e03681af190"
+            ]
+        ]
+    },
+    {
+        "id": "6b551e03681af190",
+        "type": "string",
+        "z": "cc18020bc6f47fc4",
+        "name": "",
+        "methods": [
+            {
+                "name": "delLeftMost",
+                "params": [
+                    {
+                        "type": "str",
+                        "value": "response"
+                    }
+                ]
+            }
+        ],
+        "prop": "payload",
+        "propout": "payload",
+        "object": "msg",
+        "objectout": "msg",
+        "x": 1030,
+        "y": 260,
+        "wires": [
+            [
+                "bcfdf930a9e42a00"
+            ]
+        ]
+    },
+    {
+        "id": "bcfdf930a9e42a00",
+        "type": "base64",
+        "z": "cc18020bc6f47fc4",
+        "name": "",
+        "action": "",
+        "property": "payload",
+        "x": 1180,
+        "y": 260,
+        "wires": [
+            [
+                "f04a2b1140d06b6e"
+            ]
+        ]
+    },
+    {
+        "id": "44e4a85b83560750",
+        "type": "change",
+        "z": "cc18020bc6f47fc4",
+        "name": "Start Service",
+        "rules": [
+            {
+                "t": "set",
+                "p": "payload",
+                "pt": "msg",
+                "to": "Procesando...",
+                "tot": "str"
+            }
+        ],
+        "action": "",
+        "property": "",
+        "from": "",
+        "to": "",
+        "reg": false,
+        "x": 350,
+        "y": 40,
+        "wires": [
+            []
+        ]
+    },
+    {
+        "id": "f04a2b1140d06b6e",
+        "type": "change",
+        "z": "cc18020bc6f47fc4",
+        "name": "End Service",
+        "rules": [
+            {
+                "t": "set",
+                "p": "payload",
+                "pt": "msg",
+                "to": "Terminado",
+                "tot": "str"
+            }
+        ],
+        "action": "",
+        "property": "",
+        "from": "",
+        "to": "",
+        "reg": false,
+        "x": 1310,
+        "y": 100,
+        "wires": [
+            []
+        ]
+    },
+    {
+        "id": "36159ca0e6a4467f",
+        "type": "subflow:cc18020bc6f47fc4",
+        "z": "b206d149aa21db68",
+        "name": "",
+        "x": 1290,
+        "y": 180,
+        "wires": [
+            []
+        ]
+    }
+]
